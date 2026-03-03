@@ -45,6 +45,10 @@ def main(page: ft.Page):
         weight=ft.FontWeight.BOLD
     )
 
+    boton = ft.ElevatedButton(
+        "Mostrar resumen",
+    )
+
     page.add(
         ft.Text("Formulario de Registro de Eventos", size=20, weight=ft.FontWeight.BOLD),
         nombre,
@@ -52,6 +56,7 @@ def main(page: ft.Page):
         modalidad,
         inscripcion,
         duracion,
+        boton,
         ft.Divider(),
         resumen
     )
