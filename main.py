@@ -3,15 +3,12 @@ import datetime
 
 def main(page: ft.Page):
     page.title = "Registro de Eventos"
-    
-
-def main(page: ft.Page):
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
-    def handle_change(e: ft.Event[ft.DatePicker]):
+    def handle_change(e):
         page.add(ft.Text(f"Date changed: {e.control.value.strftime('%m/%d/%Y')}"))
 
-    def handle_dismissal(e: ft.Event[ft.DialogControl]):
+    def handle_dismissal(e):
         page.add(ft.Text("DatePicker dismissed"))
 
     today = datetime.datetime.now()
@@ -65,14 +62,32 @@ def main(page: ft.Page):
         weight=ft.FontWeight.BOLD
     )
 
+    lista_eventos = ft.ListView(
+        expand=True,
+        spacing=10,
+        auto_scroll=True
+    )
+
     def mostrar(e):
-        resumen.value = (
-            "Nombre: " + nombre.value + "\n"
-            "Tipo: " + tipo.value + "\n"
-            "Modalidad: " + modalidad.value + "\n"
-            "Inscripción previa: " + ("Sí" if inscripcion.value else "No") + "\n"
-            "Duración: " + str(int(duracion.value)) + " horas"
-        )
+        if not nombre.value or nombre.value.strip() == "":
+            resumen.value = "ERROR, rellene el campo"
+            resumen.color = ft.Colors.RED
+        else:
+            texto_evento = (
+                f"Nombre: {nombre.value} | "
+                f"Tipo: {tipo.value} | "
+                f"Modalidad: {modalidad.value} | "
+                f"Inscripción: {'Sí' if inscripcion.value else 'No'} | "
+                f"Duración: {int(duracion.value)} horas"
+            )
+
+            resumen.value = texto_evento
+            resumen.color = ft.Colors.BLACK
+
+            lista_eventos.controls.append(ft.Text(texto_evento))
+
+            nombre.value = ""
+
         page.update()
 
     boton = ft.ElevatedButton(
@@ -90,8 +105,11 @@ def main(page: ft.Page):
         boton,
         ft.Divider(),
         resumen,
-        ft.Button(
-            content="Pick date",
+        ft.Divider(),
+        ft.Text("Eventos registrados:", weight=ft.FontWeight.BOLD),
+        lista_eventos,
+        ft.ElevatedButton(
+            "Pick date",
             icon=ft.Icons.CALENDAR_MONTH,
             on_click=lambda e: page.show_dialog(d),
         )
